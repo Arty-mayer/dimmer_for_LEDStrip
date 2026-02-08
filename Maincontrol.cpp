@@ -1,6 +1,5 @@
 #include "Maincontrol.h"
 
-
 Maincontrol::Maincontrol(uint8_t buttonPin, uint8_t pwmPin, uint8_t levelsCount, uint16_t stripsLong, const uint8_t *brightnessLevels) : inputsControl(buttonPin), ledStrip(stripsLong, pwmPin), levelsCount(levelsCount), brightnessLevels(brightnessLevels)
 {
     inputsControl.setNotifyListener(this);
@@ -8,7 +7,8 @@ Maincontrol::Maincontrol(uint8_t buttonPin, uint8_t pwmPin, uint8_t levelsCount,
 
 void Maincontrol::setup()
 {
-        ledStrip.setup();
+    
+    ledStrip.setup();
     // pinMode(pwmPin, OUTPUT);
     brightnessLevel = EEPROM.read(EEPROM_BRIGHTNESS_ADDR);
     if (brightnessLevel >= levelsCount)
