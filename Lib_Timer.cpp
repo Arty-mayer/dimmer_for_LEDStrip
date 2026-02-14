@@ -1,10 +1,7 @@
 #include "Lib_Timer.h"
 
-Timer::Timer(unsigned long time) : ttime(time), timerEnd(true)
+Timer::Timer(unsigned long time) : ttime(time), timerEnd(true), timerOn(false)
 {
-  ttime = time;
-  timerEnd = true;
-  timerOn = false;
 }
 
 void Timer::setTime(unsigned long time)

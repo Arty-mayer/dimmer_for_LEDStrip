@@ -69,7 +69,7 @@ void InputsControl::setNewState(Inputs newState)
 
         currentState = newState;
         if (notifyListener != nullptr)
-            notifyListener->notify(currentState, lastState);
+            notifyListener->notifyInput(currentState, lastState);
     }
 }
 

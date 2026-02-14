@@ -7,7 +7,7 @@ Maincontrol::Maincontrol(uint8_t buttonPin, uint8_t pwmPin, uint8_t levelsCount,
 
 void Maincontrol::setup()
 {
-    
+
     ledStrip.setup();
     // pinMode(pwmPin, OUTPUT);
     brightnessLevel = EEPROM.read(EEPROM_BRIGHTNESS_ADDR);
@@ -19,60 +19,98 @@ void Maincontrol::setup()
 
 void Maincontrol::loop()
 {
+    helpTimer.tick();
+    lightTimer.loop();
     inputsControl.loop();
+    if (helpTimer.isTimerEnd())
+    {
+       if (lightTimer.isSettingsMode())
+        {
+            lightTimer.setTimerOn();
+        }
+    }
 }
 
-void Maincontrol::notify(Inputs inputState, Inputs inputLastState)
+void Maincontrol::notifyInput(Inputs inputState, Inputs inputLastState)
 {
     inputsHandler(inputState);
 }
 
-void Maincontrol::inputsHandler(Inputs inputState)
+void Maincontrol::notifyTimer()
 {
-    switch (inputState)
-    {
-    case Inputs::BUTTON_1:
-        if (isLightOnstate)
-        {
-            switchBrightness();
-        }
-        else
-        {
-            switchOnOff();
-        }
-        break;
-    case Inputs::BUTTON_1_LONG:
-        if (isLightOnstate)
-        {
-            switchOnOff();
-        }
-        else
-        {
-            saveBrightnessToEEPROM();
-        }
-        break;
-
-    default:
-        break;
-    }
+    switchOff();
 }
 
-void Maincontrol::switchOnOff()
+void Maincontrol::inputsHandler(Inputs inputState)
 {
-    isLightOnstate = !isLightOnstate;
-    if (!isLightOnstate)
+
+    if (isLightOn)
     {
-        ledStrip.setMode(LedStrip::FunctionsMode::OFF);
+        if (inputState == Inputs::BUTTON_1)
+        {
+            helpTimer.timerStart();
+            switchBrightness();
+        }
+        else if (inputState == Inputs::BUTTON_1_LONG)
+        {
+            if (helpTimer.isTimerOn())
+            {
+                helpTimer.timerStop();
+                saveTimerToEEPROM();
+            }
+            else
+            {
+                switchOff();
+            }
+        }
     }
     else
     {
-        ledStrip.setMode(LedStrip::FunctionsMode::ON);
+        if (inputState == Inputs::BUTTON_1)
+        {
+            if (helpTimer.isTimerOn())
+            {
+                helpTimer.timerStart();
+                lightTimer.TimerPlus();
+            }
+            else
+            {
+                lightTimer.setTimerOff();
+            }
+            switchOn();
+        }
+        else if (inputState == Inputs::BUTTON_1_LONG)
+        {
+            if (helpTimer.isTimerOn())
+            {
+                saveTimerToEEPROM();
+                helpTimer.timerStart();
+            }
+            else
+            {
+                lightTimer.enterSettingsMode();
+                helpTimer.timerStart();
+            }
+        }
     }
+}
+
+void Maincontrol::switchOff()
+{
+    isLightOn = false;
+    ledStrip.setMode(LedStrip::FunctionsMode::OFF);
+    lightTimer.setTimerOff();
+}
+
+void Maincontrol::switchOn()
+{
+    isLightOn = true;
+    ledStrip.setMode(LedStrip::FunctionsMode::ON);
 }
 
 void Maincontrol::switchBrightness()
 {
-    if (!isLightOnstate)
+    if (!isLightOn)
     {
         return;
     }
@@ -85,19 +123,12 @@ void Maincontrol::saveBrightnessToEEPROM()
     EEPROM.update(EEPROM_BRIGHTNESS_ADDR, brightnessLevel);
     // визуализация сохранения яркости (мигание текущим уровнем яркости)
     // TODO: переписать под LED Strip
-    bool switchKey = false;
-    for (uint8_t i = 0; i < 6; i++)
-    {
-        if (switchKey)
-        {
-            switchKey = false;
-            // analogWrite(pwmPin, 0);
-        }
-        else
-        {
-            switchKey = true;
-            // analogWrite(pwmPin, brightnessLevels[brightnessLevel]);
-        }
-        delay(200);
-    }
+    
+    
+}
+
+void Maincontrol::saveTimerToEEPROM()
+{
+
+
 }

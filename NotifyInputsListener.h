@@ -7,6 +7,6 @@ enum class Inputs;
 class NotifyInputsListener
 {
 public:
-    virtual void notify(Inputs inputState, Inputs inputLastState) = 0;
+    virtual void notifyInput(Inputs inputState, Inputs inputLastState) = 0;
 };  
 #endif
