@@ -13,7 +13,7 @@ enum class Inputs
 {
     NONE,
     BUTTON_1,
-    BUTTON_1_LONG,
+    BUTTON_1_LONG
 };
 
 class InputsControl

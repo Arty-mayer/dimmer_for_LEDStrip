@@ -27,6 +27,7 @@ void InputsControl::loop()
     timerButton1.tick();
     // для механических кнопок
     button1.buttonListener();
+    
     btnListener();
     stateReset();
 }
@@ -68,6 +69,7 @@ void InputsControl::setNewState(Inputs newState)
         timerNewState.timerStart();
 
         currentState = newState;
+
         if (notifyListener != nullptr)
             notifyListener->notifyInput(currentState, lastState);
     }

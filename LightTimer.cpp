@@ -45,30 +45,39 @@ void LightTimer::TimerPlus()
     {
         time = MAX_TIME;
     }
+    Logger::log("Time changed to: ", false);
+    Logger::log(String(time / 60000).c_str(), false);
+    Logger::log(" minutes");
 }
 
 void LightTimer::setTimerOn()
 {
     if (time == 0)
     {
+        Logger::log("Timer is set to 0, cannot turn on timer");
         timerMode = false;
         return;
     }
+    Logger::log("Turning on timer: ", false);
+    Logger::log(String(time / 60000).c_str());
     settingsMode = false;
     timerMode = true;
-    mainTimer.setTime(time);
+    mainTimer.setTime(30000);
     mainTimer.timerStart();
+    Serial.print("timer start -> ");
+    Serial.println(time);
 }
 
 void LightTimer::setTimerOff()
 {
+    Logger::log("Turning off timer");
     timerMode = false;
     mainTimer.timerStop();
 }
 
 void LightTimer::setNotifyListener(NotifyLightModesListener *lstnr)
 {
-    listener = listener;
+    listener = lstnr;
 }
 
 unsigned long LightTimer::getRemainingTime()
@@ -78,20 +87,33 @@ unsigned long LightTimer::getRemainingTime()
 
 void LightTimer::timerEndAction()
 {
-    if (listener != nullptr)
+    Serial.println("timer is end in timer...");
+    timerMode = false;
+    // Logger::log("Timer ended, sending ends-notification... ", false);
+    if (listener == nullptr)
     {
-        listener->notifyTimer();
+        Serial.println("i have no a listener");
+       // Logger::log("Listener is null, cannot notify, notification skipped");
+        return;
     }
+    listener->notifyTimer();
+    Logger::log("Done");
 }
 
 void LightTimer::enterSettingsMode()
 {
+    Logger::log("Entering timer settings mode");
+
     setTimerOff();
     settingsMode = true;
 }
 
 void LightTimer::setTimeInMinutes(uint8_t minutes)
 {
+    Logger::log("Setting time forced in minutes to: ", false);
+    Logger::log(String(minutes).c_str(), false);
+    Logger::log(" minutes");
+
     setTimerOff();
     time = minutes * 60000;
 }

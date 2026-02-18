@@ -4,15 +4,16 @@
 #include <Arduino.h>
 #include "CountdownTimer.h"
 #include "NotifyLightModesListener.h"
+#include "SerialLogger.h"
 // #include "src/ModulesInterface.h"
 
 class LightTimer
 {
 
 public:
-    const unsigned long MAX_TIME = 7200000;          // 120 min
-    const unsigned long STEP_LONG = 900000;          // 15 min
-    const unsigned long STEP_SHORT = 600000;         // 10 min
+    const unsigned long MAX_TIME = 7200000;          // 120 min  больше 240 минут (14 400 000) нельзя!  
+    const unsigned long STEP_LONG = 600000;          // 10 min
+    const unsigned long STEP_SHORT = 300000;         // 5 min
     const unsigned long LS_SEPARATOR_TIME = 1800000; // 30 min
 
     LightTimer();
@@ -20,7 +21,6 @@ public:
     void loop();
 
     void TimerPlus();
-    // void TimerMinus();
     void setTimerOn();
     void setTimerOff();
     void setNotifyListener(NotifyLightModesListener *lstnr);
