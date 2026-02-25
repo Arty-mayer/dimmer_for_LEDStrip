@@ -1,4 +1,4 @@
-RU Русский
+# RU Русский
 Светильник оснащён регулировкой яркости, таймером отключения и функцией сохранения настроек, которые используются как значения по умолчанию после повторного подключения к источнику питания.
 1. Включение
 Для включения кратко нажмите кнопку.
@@ -34,7 +34,7 @@ RU Русский
 Функция логирования доступна при подключении к микроконтроллеру через RS232.
 Для активации: удерживайте кнопку, подключите устройство к питанию и продолжайте удерживать кнопку ещё около 2 секунд.
  
-DE Deutsch:
+# DE Deutsch:
 Die Leuchte verfügt über eine Helligkeitsregelung, einen Abschalttimer sowie eine Speicherfunktion, mit der die eingestellten Parameter nach dem erneuten Anschließen an die Stromversorgung als Standardwerte verwendet werden.
 1. Einschalten
 Zum Einschalten die Taste kurz drücken. Wenn das Licht eingeschaltet ist, kann die Helligkeit durch kurze Tastendrücke angepasst werden.
@@ -69,7 +69,7 @@ Debug-Funktion (Logging):
 Die Logging-Funktion kann über eine RS232-Verbindung zum Mikrocontroller genutzt werden.
 Zum Aktivieren: Taste gedrückt halten, Gerät an die Stromversorgung anschließen und die Taste noch etwa 2 Sekunden weiter gedrückt halten.
  
-EN English:
+# EN English:
 The lamp features brightness control, a shutdown timer, and a memory function that saves the selected settings to be used as default after reconnecting to the power supply.
 1. Power on
 Press the button briefly to turn the light on.
