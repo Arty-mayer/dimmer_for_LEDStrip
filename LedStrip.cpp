@@ -4,10 +4,10 @@ void LedStrip::setup()
 {
     strip.begin();          // Инициализация ленты
     strip.clear();          // Очистка (все погашены)
-    strip.setBrightness(0); // Установка яркости (0-255)
+    strip.setBrightness(0); // Установка яркости (0)
     strip.show();
 
-   // Serial.println("LedStrip setup completed");
+    LOG(moduleName, "Setup");
 }
 
 void LedStrip::loop()
@@ -53,8 +53,7 @@ void LedStrip::setBrightness(uint8_t newBrightness)
 
     brightness = newBrightness;
 
-    Logger::log("Setting brightness to: ", false);
-    Logger::log(String(brightness).c_str());
+    LOGV(moduleName, "Setting brightness to", brightness);
 
     if (currentMode == Mode::OFF)
     {
@@ -78,9 +77,11 @@ void LedStrip::setMode(Mode mode)
     switch (currentMode)
     {
     case Mode::OFF:
+        LOG(moduleName, "Set mode -> ON");
         animation = Animation::FADE_OUT;
         break;
     case Mode::ON:
+        LOG(moduleName, "Set mode -> ON");
         animation = Animation::FADE_IN;
         currentBrightness = 10;
         strip.setBrightness(currentBrightness);
@@ -98,19 +99,18 @@ void LedStrip::setMode(Mode mode)
 
 void LedStrip::forceBritnessAnimation()
 {
+    LOG(moduleName, "Brightness animation is skeeping (forced)");
     currentBrightness = brightness;
 }
 
 void LedStrip::ShowAnimationsFrameFortimer(uint32_t time)
 {
-   // Serial.println((long)(time / 1000));
     timeReformation(time, &h, &m, &s);
     ShowAnimationsFrameFortimer();
 }
 
 void LedStrip::ShowAnimationsFrameFortimer()
 {
-  //  Serial.println(m);
     uint8_t minutsLED = m / 5;
     strip.clear();
     strip.setBrightness(20);
@@ -198,6 +198,7 @@ bool LedStrip::isBrightnessChenged(uint8_t target)
 
 void LedStrip::showSaveAnimation()
 {
+    LOG(moduleName, "Start Save-animation");
     strip.setBrightness(20);
     strip.clear();
     PictureRamPtr pic;
@@ -232,13 +233,23 @@ void LedStrip::showSaveAnimation()
     }
 }
 
+void LedStrip::showCommandAcceptionAnimation()
+{
+    strip.setBrightness(1);
+    strip.show();
+    delay(20);
+    strip.setBrightness(brightness);
+    strip.show();
+  
+}
+
 void LedStrip::timeReformation(uint32_t time, uint8_t *h, uint8_t *m, uint8_t *s)
 {
     uint32_t totalSeconds = time / 1000;
 
     *s = totalSeconds % 60;
     *m = (totalSeconds / 60) % 60;
-    *h = (totalSeconds / 3600); // часы без ограничения
+    *h = (totalSeconds / 3600);
 }
 
 void LedStrip::fadeInTakt()

@@ -34,7 +34,6 @@ void Maincontrol::notifyInput(Inputs inputState, Inputs inputLastState)
 
 void Maincontrol::notifyTimer()
 {
-  //  Serial.println("timer is end in main");
     switchOff();
 }
 
@@ -55,7 +54,6 @@ void Maincontrol::StateControl()
         break;
 
     case State::BRITHNESS_CHANGE:
-        // TODO Визуализация изменения яркости (мигание, плавное изменение яркости и т.д.)
         currentState = State::STANDING_BY;
         break;
 
@@ -70,7 +68,6 @@ void Maincontrol::inputsHandler(Inputs inputState)
     {
         if (inputState == Inputs::BUTTON_1)
         {
-            //Serial.println("BRITHNESS_CHANGE");
             helpTimer.timerStart();
             currentState = State::BRITHNESS_CHANGE;
             switchBrightness();
@@ -79,15 +76,13 @@ void Maincontrol::inputsHandler(Inputs inputState)
         {
             if (currentState == State::BRITHNESS_CHANGE)
             {
-              //  Serial.println("SAVE_BRIGHTNESS");
                 currentState = State::SAVE_BRIGHTNESS;
-                // TODO рассмотреть варимант с изменением времени вспомогательного таймера.
                 helpTimer.timerStop();
                 saveBrightnessToEEPROM();
             }
             else if (currentState == State::STANDING_BY)
             {
-                Serial.println("switchOff");
+                ledStrip.showCommandAcceptionAnimation();
                 switchOff();
             }
         }
@@ -98,30 +93,27 @@ void Maincontrol::inputsHandler(Inputs inputState)
         {
             if (currentState == State::SETTINGS_TIMER)
             {
-               // Serial.println("TimerPlus");
+
                 helpTimer.timerStart();
                 lightTimer.TimerPlus();
                 showTimerSettings();
             }
             else if (currentState == State::STANDING_BY)
             {
-                // lightTimer.setTimerOff();
-                Serial.println("switchOn");
+                lightTimer.setTimerOff();
                 switchOn();
             }
         }
         else if (inputState == Inputs::BUTTON_1_LONG)
         {
-          //  Serial.println("Long press detected");
             if (currentState == State::SETTINGS_TIMER)
             {
-            //    Serial.println("Saving timer settings");
+
                 helpTimer.timerStart();
                 saveTimerToEEPROM();
             }
             else if (currentState == State::STANDING_BY)
             {
-                //Serial.println("Entering timer settings mode");
                 helpTimer.timerStart();
                 lightTimer.enterSettingsMode();
                 currentState = State::SETTINGS_TIMER;
@@ -134,19 +126,17 @@ void Maincontrol::inputsHandler(Inputs inputState)
 
 void Maincontrol::switchOff()
 {
-    Logger::log("Switching off light");
-    // isLightOn = false;
+    LOG("MainControl", "Switching off light");
     ledStrip.setMode(LedStrip::Mode::OFF);
     lightTimer.setTimerOff();
     helpTimer.timerStart();
     inputsLock = true;
-    delay(1000); // TODO задержка для визуализации выключения (можно убрать или заменить на мигание светодиода)
+    delay(1000);
 }
 
 void Maincontrol::switchOn()
 {
-    Logger::log("Switching on light");
-    // isLightOn = true;
+    LOG("MainControl", "Switching on light");
     ledStrip.setMode(LedStrip::Mode::ON);
 }
 
@@ -154,22 +144,19 @@ void Maincontrol::switchBrightness()
 {
     if (ledStrip.getMode() == LedStrip::Mode::OFF)
     {
-        Logger::log("Brightness change ignored because light is off");
+        LOG("MainControl", "Brightness change ignored because light is off");
         return;
     }
-    Logger::log("Switching brightness: ");
+
     brightnessLevel = (brightnessLevel + 1) % levelsCount; // вместо конструкции с if для цикличного перебора уровней яркости
-    Logger::log(" -brightness level: ", false);
-    Logger::log(String(brightnessLevel).c_str());
+    LOGV("MainControl", "Change brightness to", brightnessLevel);
     ledStrip.setBrightness(brightnessLevels[brightnessLevel]);
 }
 
 void Maincontrol::saveBrightnessToEEPROM()
 {
-
     EEPROM.update(EEPROM_BRIGHTNESS_ADDR, brightnessLevel);
-    Logger::log("Saving brightness to EEPROM: ");
-    Logger::log(String(brightnessLevel).c_str());
+    LOGV("MainControl", "Saving brightness to EEPROM", brightnessLevel);
     ledStrip.showSaveAnimation();
 }
 
@@ -177,8 +164,7 @@ void Maincontrol::saveTimerToEEPROM()
 {
     unsigned long timerValue = lightTimer.getTimeInMinutes();
     EEPROM.update(EEPROM_TIMER_ADDR, timerValue);
-    Logger::log("Saving timer to EEPROM: ");
-    Logger::log(String(timerValue).c_str());
+    LOGV("MainControl", "Saving timer to EEPROM", brightnessLevel);
     ledStrip.showSaveAnimation();
 }
 
@@ -190,8 +176,7 @@ void Maincontrol::loadBrightnessFromEEPROM()
         brightnessLevel = brightnessLevels[levelsCount - 1];
     }
     ledStrip.setBrightness(brightnessLevels[brightnessLevel]);
-    Logger::log("Loaded brightness from EEPROM: ");
-    Logger::log(String(brightnessLevel).c_str());
+    LOGV("MainControl", "Loading brightness from EEPROM:", brightnessLevel);
 }
 
 void Maincontrol::loadTimerFromEEPROM()
@@ -204,6 +189,5 @@ void Maincontrol::loadTimerFromEEPROM()
         timerValueInMillis = lightTimer.getMaxTime();
     }
     lightTimer.setTimeInMinutes(timerValue);
-    Logger::log("Loaded timer from EEPROM: ");
-    Logger::log(String(timerValue).c_str());
+    LOGV("MainControl", "Loading timer from EEPROM:", timerValue);
 }

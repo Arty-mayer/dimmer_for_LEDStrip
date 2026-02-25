@@ -45,32 +45,27 @@ void LightTimer::TimerPlus()
     {
         time = MAX_TIME;
     }
-    Logger::log("Time changed to: ", false);
-    Logger::log(String(time / 60000).c_str(), false);
-    Logger::log(" minutes");
+    LOGV(moduleName, "Time changed to", time / 60000);
 }
 
 void LightTimer::setTimerOn()
 {
     if (time == 0)
     {
-        Logger::log("Timer is set to 0, cannot turn on timer");
+        LOG(moduleName, "Timer is set to 0, cannot turn on timer");
         timerMode = false;
         return;
     }
-    Logger::log("Turning on timer: ", false);
-    Logger::log(String(time / 60000).c_str());
     settingsMode = false;
     timerMode = true;
     mainTimer.setTime(30000);
     mainTimer.timerStart();
-    Serial.print("timer start -> ");
-    Serial.println(time);
+    LOGV(moduleName, "timer start", time / 60000);
 }
 
 void LightTimer::setTimerOff()
 {
-    Logger::log("Turning off timer");
+    LOG(moduleName, "Turning off timer");
     timerMode = false;
     mainTimer.timerStop();
 }
@@ -87,65 +82,27 @@ unsigned long LightTimer::getRemainingTime()
 
 void LightTimer::timerEndAction()
 {
-    Serial.println("timer is end in timer...");
+    LOG(moduleName, "timer is end in timer...");
     timerMode = false;
-    // Logger::log("Timer ended, sending ends-notification... ", false);
     if (listener == nullptr)
     {
-        Serial.println("i have no a listener");
-       // Logger::log("Listener is null, cannot notify, notification skipped");
+        LOG(moduleName, "i have no a listener");
         return;
     }
     listener->notifyTimer();
-    Logger::log("Done");
+    LOG(moduleName, "Done");
 }
 
 void LightTimer::enterSettingsMode()
 {
-    Logger::log("Entering timer settings mode");
-
+    LOG(moduleName, "Entering timer settings mode");
     setTimerOff();
     settingsMode = true;
 }
 
 void LightTimer::setTimeInMinutes(uint8_t minutes)
 {
-    Logger::log("Setting time forced in minutes to: ", false);
-    Logger::log(String(minutes).c_str(), false);
-    Logger::log(" minutes");
-
+    LOGV(moduleName, "Setting time forced in minutes to (minutes)", minutes);
     setTimerOff();
     time = minutes * 60000;
 }
-
-/*
-void LightTimer::TimerMinus()
-{
-    if (startSettings())
-    {
-        return;
-    }
-    // Serial.println("TimerMinus");
-    unsigned long timeSaved = time;
-
-    if (time == 0)
-    {
-        time = maxTime;
-        return;
-    }
-
-    if (time <= LS_SEPARATOR_TIME)
-    {
-        time -= STEP_SHORT;
-    }
-    else
-    {
-        time -= STEP_LONG;
-    }
-
-    if (time > timeSaved)
-    { // underflow
-        time = 0;
-    }
-}
-*/

@@ -45,18 +45,18 @@ static const PictureFlashPtr pictures[FRAME_COUNT] PROGMEM = {
     SaveAnimation01::picture05
 };
 
-// ===== SRAM БУФЕР =====
+// SRAM БУФЕР 
 
 uint8_t SaveAnimation01::buffer[PIXEL_COUNT][2];
 
-// ===== КОЛИЧЕСТВО ЭЛЕМЕНТОВ =====
+// КОЛИЧЕСТВО ЭЛЕМЕНТОВ 
 
 uint8_t SaveAnimation01::getPixelCount()
 {
     return PIXEL_COUNT;
 }
 
-// ===== ПОЛУЧИТЬ УКАЗАТЕЛЬ НА FLASH =====
+// ПОЛУЧИТЬ УКАЗАТЕЛЬ НА FLASH 
 
 PictureFlashPtr SaveAnimation01::getPicture(uint8_t pictureNummer)
 {
@@ -65,7 +65,7 @@ PictureFlashPtr SaveAnimation01::getPicture(uint8_t pictureNummer)
     return (PictureFlashPtr)pgm_read_ptr(&pictures[pictureNummer]);
 }
 
-// ===== КОПИРОВАНИЕ В SRAM =====
+// КОПИРОВАНИЕ В SRAM 
 
 PictureRamPtr SaveAnimation01::getPictureRam(uint8_t pictureNummer)
 {

@@ -6,7 +6,7 @@
  class Timer {
   public: 
 
-  Timer (unsigned long time) ; //constructor
+  Timer (unsigned long time) ; 
  
   void setTime (unsigned long time);
   void timerStart();

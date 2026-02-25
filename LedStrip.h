@@ -13,6 +13,8 @@
 #define LED_Brightness_Step 1
 #define LED_Brightness_Step_time 5
 
+#define CA_COLORS_MAX_COUNT 3
+
 class LedStrip
 {
 public:
@@ -20,8 +22,6 @@ public:
     {
         OFF,
         ON
-        //      SETTINGS_TEMPERATURE,
-        //      SETTINGS_TIMER
     };
 
     enum class Animation
@@ -32,7 +32,6 @@ public:
         FADE_IN,
         FADE_OUT,
         TIMER_SETTINGS
-        //   FAST_ANIMATION_FN
     };
 
     const bool haveSattingsMode = true;
@@ -43,10 +42,9 @@ public:
     {
     }
 
-    void setup();                           // вызывается в setup()   (при старте)
-    void loop();                            // петля, вызывается в loop() и вызывает тригеры обновления ленты
-                                            //   void setBrightnessPluss(); // установка настроек ленты (яркость+)
-                                            //   void setBrightnessMinus();
+    void setup();
+    void loop();
+
     void setBrightness(uint8_t brightness); // установка настроек ленты (яркость)
 
     void setMode(Mode mode); // установка режима работы ленты
@@ -54,18 +52,17 @@ public:
     void ShowAnimationsFrameFortimer(uint32_t time);
     void ShowAnimationsFrameFortimer();
     void showSaveAnimation();
+    void showCommandAcceptionAnimation();
     Mode getMode() { return currentMode; }; // получение текущего режима работы ленты
 
 private:
+    const char *moduleName = "LedStrip";
     Adafruit_NeoPixel strip;
     Timer timerForAnimation;
     uint8_t h, m, s;
-
-    // Timer updateTimer = Timer(25); // Таймер обновления ленты каждые 25 мс
     uint8_t brightness = LED_Default_Brightness;
     int16_t currentBrightness = 0;
     Mode currentMode = Mode::OFF;
-    // State previousMode = State::OFF;
 
     uint32_t LigthColor = 0x00FFFFFF; // Белый цвет по умолчанию
 
@@ -76,7 +73,6 @@ private:
     void brightnessPlusTakt();
     void brightnessMinusTakt(bool toNull = false);
     bool isBrightnessChenged(uint8_t target);
-    
 
     void timeReformation(uint32_t time, uint8_t *h, uint8_t *m, uint8_t *s);
 };

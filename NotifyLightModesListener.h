@@ -1,7 +1,6 @@
 #ifndef NOTIFYRECIPIENT_H
 #define NOTIFYRECIPIENT_H
 
-//#include "LightTimer.h"
 
 class NotifyLightModesListener
 {
